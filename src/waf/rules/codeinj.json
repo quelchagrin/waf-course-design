@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "category": "codeinj",
+  "comment": "代码注入规则族：按 Web 应用所用语言 PHP、Python、Java 分别建规则，另含模板表达式与 shell 提示。",
+  "rules": [
+    {"id": "CODE-PHP-001", "subtype": "php_eval", "severity": 8, "pattern": "\\b(?:eval|assert)\\s*\\(", "desc": "PHP 代码执行：eval/assert"},
+    {"id": "CODE-PHP-002", "subtype": "php_exec", "severity": 8, "pattern": "\\b(?:system|exec|shell_exec|passthru|popen|proc_open)\\s*\\(", "desc": "PHP 命令执行函数族"},
+    {"id": "CODE-PHP-003", "subtype": "php_dynamic", "severity": 7, "pattern": "\\bcreate_function\\s*\\(|preg_replace\\s*\\(\\s*['\"][^'\"]*/e", "desc": "PHP 动态函数：create_function / preg_replace /e"},
+    {"id": "CODE-PHP-004", "subtype": "php_include", "severity": 7, "pattern": "\\b(?:include|require)(?:_once)?\\s*\\(\\s*\\$", "desc": "PHP 文件包含，变量作路径，可致 LFI 或 RFI"},
+    {"id": "CODE-PHP-005", "subtype": "php_unserialize", "severity": 6, "pattern": "\\bunserialize\\s*\\(", "desc": "PHP 反序列化，可利用 POP 链"},
+    {"id": "CODE-PHP-006", "subtype": "php_obfuscate", "severity": 5, "pattern": "\\bbase64_decode\\s*\\(|\\bphpinfo\\s*\\(", "desc": "PHP 混淆解码 / 信息泄露函数"},
+    {"id": "CODE-PHP-007", "subtype": "php_superglobal", "severity": 7, "pattern": "\\$_(?:GET|POST|REQUEST|COOKIE|SERVER)\\s*\\[", "desc": "使用超全局变量作为代码参数"},
+
+    {"id": "CODE-PY-001", "subtype": "python_eval", "severity": 8, "pattern": "\\b(?:eval|exec|compile)\\s*\\(", "desc": "Python 动态执行：eval/exec/compile"},
+    {"id": "CODE-PY-002", "subtype": "python_import", "severity": 8, "pattern": "\\b__import__\\s*\\(|\\bimportlib\\.import_module\\s*\\(", "desc": "Python 动态导入模块"},
+    {"id": "CODE-PY-003", "subtype": "python_os", "severity": 7, "pattern": "\\bos\\.(?:system|popen|execv|spawn\\w*)", "desc": "Python os 模块命令执行"},
+    {"id": "CODE-PY-004", "subtype": "python_subprocess", "severity": 6, "pattern": "\\bsubprocess\\.(?:run|call|Popen|check_output|getoutput)", "desc": "Python subprocess 调用外部程序"},
+
+    {"id": "CODE-JAVA-001", "subtype": "java_runtime", "severity": 8, "pattern": "\\bRuntime\\.getRuntime\\s*\\(|\\bProcessBuilder\\s*\\(", "desc": "Java 命令执行：Runtime / ProcessBuilder"},
+    {"id": "CODE-JAVA-002", "subtype": "java_expr", "severity": 9, "pattern": "\\$\\{jndi:", "desc": "Log4j2 JNDI 注入，CVE-2021-44228"},
+    {"id": "CODE-JAVA-003", "subtype": "java_reflect", "severity": 6, "pattern": "\\bClass\\.forName\\s*\\(|\\bgetDeclaredMethod\\s*\\(", "desc": "Java 反射调用"},
+    {"id": "CODE-JAVA-004", "subtype": "java_ognl", "severity": 8, "pattern": "%\\{\\s*\\(#|\\bognl\\b|\\$_MEMBER_ACCESS", "desc": "OGNL / 表达式注入特征"},
+    {"id": "CODE-JAVA-005", "subtype": "java_ognl", "severity": 7, "pattern": "\\$\\{[^}]{0,60}\\$\\{", "desc": "嵌套 Lookup 绕过，如 ${${lower:j}ndi:...}"},
+
+    {"id": "CODE-GEN-001", "subtype": "template", "severity": 7, "pattern": "\\{\\{\\s*(?:config|self|request|application)\\b|\\$\\{\\s*T\\s*\\(", "desc": "模板引擎表达式注入 SSTI"},
+    {"id": "CODE-GEN-002", "subtype": "shell_hint", "severity": 6, "pattern": "\\b(?:cmd|command|exec|shell)\\s*=\\s*(?:/|\\\\)?(?:bin/)?(?:sh|bash|cmd\\.exe)", "desc": "参数显式指定 shell 解释器"}
+  ]
+}

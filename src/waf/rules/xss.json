@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "category": "xss",
+  "comment": "XSS 规则族：脚本标签、事件处理器、伪协议、DOM 汇聚点等子类型，每类至少 4 条。",
+  "rules": [
+    {"id": "XSS-SCRIPT-001", "subtype": "script_tag", "severity": 8, "pattern": "<script[\\s>]", "desc": "直接注入 script 标签"},
+    {"id": "XSS-SCRIPT-002", "subtype": "script_tag", "severity": 6, "pattern": "</script", "desc": "闭合 script 标签"},
+    {"id": "XSS-SCRIPT-003", "subtype": "script_tag", "severity": 8, "pattern": "<script[^>]{0,80}\\bsrc\\s*=", "desc": "外链脚本 <script src=...>"},
+    {"id": "XSS-SCRIPT-004", "subtype": "script_tag", "severity": 7, "pattern": "\\bscript\\b[^>]{0,60}\\bsrc\\s*=\\s*['\"]?(?:https?:)?//", "desc": "脚本外链地址注入"},
+
+    {"id": "XSS-EVENT-001", "subtype": "event_handler", "severity": 7, "pattern": "\\bon(?:error|load|click|mouseover|focus|submit|change|input|toggle|animationstart)\\s*=", "desc": "常见事件处理器注入，如 onerror、onload"},
+    {"id": "XSS-EVENT-002", "subtype": "event_handler", "severity": 6, "pattern": "\\bon[a-z]{4,}\\s*=\\s*['\"]?[a-z]", "desc": "任意 on* 事件属性注入"},
+    {"id": "XSS-EVENT-003", "subtype": "event_handler", "severity": 6, "pattern": "<[a-z]+[^>]{0,120}\\bon\\w+\\s*=", "desc": "标签内联事件处理器"},
+    {"id": "XSS-EVENT-004", "subtype": "event_handler", "severity": 5, "pattern": "\\bsetTimeout\\s*\\(\\s*['\"]", "desc": "定时器执行字符串代码"},
+
+    {"id": "XSS-URI-001", "subtype": "uri_scheme", "severity": 7, "pattern": "javascript\\s*:", "desc": "javascript: 伪协议"},
+    {"id": "XSS-URI-002", "subtype": "uri_scheme", "severity": 6, "pattern": "vbscript\\s*:", "desc": "vbscript: 伪协议"},
+    {"id": "XSS-URI-003", "subtype": "uri_scheme", "severity": 7, "pattern": "data\\s*:\\s*text/html", "desc": "data:text/html 内联页面"},
+    {"id": "XSS-URI-004", "subtype": "uri_scheme", "severity": 6, "pattern": "data\\s*:\\s*image/svg", "desc": "data:image/svg 内联矢量图，可携带脚本"},
+
+    {"id": "XSS-DOM-001", "subtype": "dom_sink", "severity": 6, "pattern": "document\\.(?:cookie|write|writeln|location)", "desc": "DOM 汇聚点：document.cookie/write/location"},
+    {"id": "XSS-DOM-002", "subtype": "dom_sink", "severity": 5, "pattern": "\\.innerHTML\\s*=", "desc": "DOM 汇聚点：innerHTML 赋值"},
+    {"id": "XSS-DOM-003", "subtype": "dom_sink", "severity": 5, "pattern": "window\\.location\\s*=", "desc": "DOM 汇聚点：window.location 跳转"},
+    {"id": "XSS-DOM-004", "subtype": "dom_sink", "severity": 6, "pattern": "\\bfromCharCode\\s*\\(", "desc": "字符编码构造脚本，规避关键字检测"},
+
+    {"id": "XSS-TAG-001", "subtype": "html_tag", "severity": 7, "pattern": "<iframe", "desc": "iframe 框架注入"},
+    {"id": "XSS-TAG-002", "subtype": "html_tag", "severity": 6, "pattern": "<(?:object|embed)", "desc": "object/embed 插件注入"},
+    {"id": "XSS-TAG-003", "subtype": "html_tag", "severity": 5, "pattern": "<svg[^>]*>", "desc": "SVG 标签注入，可内联脚本"},
+    {"id": "XSS-TAG-004", "subtype": "html_tag", "severity": 5, "pattern": "<meta\\s+http-equiv", "desc": "meta 刷新/跳转注入"},
+
+    {"id": "XSS-CALL-001", "subtype": "js_call", "severity": 6, "pattern": "\\b(?:alert|prompt|confirm)\\s*\\(", "desc": "弹窗函数调用，典型 XSS 验证特征"},
+    {"id": "XSS-CALL-002", "subtype": "js_call", "severity": 6, "pattern": "\\beval\\s*\\(", "desc": "动态执行代码 eval()"},
+    {"id": "XSS-CALL-003", "subtype": "js_call", "severity": 5, "pattern": "\\.cookie\\s*=", "desc": "写入 cookie，会话劫持特征"},
+    {"id": "XSS-CALL-004", "subtype": "js_call", "severity": 5, "pattern": "\\batob\\s*\\(", "desc": "base64 解码构造脚本，规避关键字"}
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "category": "fp",
+  "comment": "误报集：模拟正常业务里会出现的'看起来像攻击'的内容，全部期望放行。任何一条被拦都是一次误报，需要调规则或加白名单。",
+  "cases": [
+    {"name": "商品名 select box", "location": "url", "expect": "allow", "path": "/xss?q=select%20box"},
+    {"name": "地名 Union Station", "location": "url", "expect": "allow", "path": "/xss?q=Union%20Station"},
+    {"name": "句子 I love javascript", "location": "url", "expect": "allow", "path": "/xss?q=I%20love%20javascript"},
+    {"name": "人名 O'Reilly", "location": "url", "expect": "allow", "path": "/xss?q=O%27Reilly"},
+    {"name": "英文引号对话", "location": "url", "expect": "allow", "path": "/xss?q=He%20said%20%22hello%22"},
+    {"name": "折扣 100% off", "location": "url", "expect": "allow", "path": "/xss?q=100%25%20off"},
+    {"name": "竖线分隔 a|b", "location": "url", "expect": "allow", "path": "/xss?q=a%7Cb"},
+    {"name": "日期 2019-01-01", "location": "url", "expect": "allow", "path": "/xss?q=2019-01-01"},
+    {"name": "短句 pass the salt & pepper", "location": "url", "expect": "allow", "path": "/xss?q=pass%20the%20salt%20%26%20pepper"},
+    {"name": "邮箱地址", "location": "url", "expect": "allow", "path": "/xss?q=user%40example.com"},
+    {"name": "半角分号与冒号", "location": "url", "expect": "allow", "path": "/xss?q=note%3B%20status%3A%20ok"},
+    {"name": "算式 1+1=2", "location": "url", "expect": "allow", "path": "/xss?q=1%2B1%3D2"},
+    {"name": "中文正文", "location": "url", "expect": "allow", "path": "/xss?q=%E8%AF%B7%E5%9C%A8%E4%B8%8B%E5%8D%88%E4%B8%89%E7%82%B9%E5%89%8D%E6%8F%90%E4%BA%A4"},
+    {"name": "请求追踪 ID", "location": "header", "expect": "allow", "path": "/sqli?id=1", "headers": {"X-Request-Id": "123e4567-e89b-12d3-a456-426614174000"}},
+    {"name": "正常 Cookie 主题与语言", "location": "cookie", "expect": "allow", "path": "/sqli?id=1", "cookie": "theme=dark; lang=zh-CN; uid=1024"},
+    {"name": "正常 JSON 表单", "location": "body", "expect": "allow", "method": "POST", "path": "/calc", "body": "{\"name\":\"张三\",\"note\":\"hello world\"}", "content_type": "application/json"},
+    {"name": "文件路径参数", "location": "url", "expect": "allow", "path": "/xss?q=%2Fhome%2Fuser%2Freport.pdf"},
+    {"name": "版本号字符串", "location": "url", "expect": "allow", "path": "/xss?q=v1.10.5-build.2024"},
+    {"name": "含 and 的正常句子", "location": "url", "expect": "allow", "path": "/xss?q=rock%20and%20roll"},
+    {"name": "含 or 的正常句子", "location": "url", "expect": "allow", "path": "/xss?q=this%20or%20that"}
+  ]
+}

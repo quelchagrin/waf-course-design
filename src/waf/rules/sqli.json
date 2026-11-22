@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "category": "sqli",
+  "comment": "SQL 注入规则族：按子类型分组，每个子类型至少 4 条。severity 为异常评分权重，单条规则不直接拦截。",
+  "rules": [
+    {"id": "SQLI-UNION-001", "subtype": "union", "severity": 8, "pattern": "union\\s+(all\\s+)?select", "desc": "UNION [ALL] SELECT 联合查询注入"},
+    {"id": "SQLI-UNION-002", "subtype": "union", "severity": 9, "pattern": "union\\s+select\\s+[^;]{0,120}\\bfrom\\b", "desc": "UNION SELECT ... FROM 完整联合查询"},
+    {"id": "SQLI-UNION-003", "subtype": "union", "severity": 7, "pattern": "union\\s+select\\s+(?:\\d+|null|0x[0-9a-f]+)", "desc": "UNION SELECT 后直接跟常量占位符"},
+    {"id": "SQLI-UNION-004", "subtype": "union", "severity": 7, "pattern": "\\bunion\\b[^;]{0,40}\\bselect\\b", "desc": "union 与 select 之间插入干扰字符的变体"},
+
+    {"id": "SQLI-BOOL-001", "subtype": "boolean", "severity": 6, "pattern": "\\bor\\s+1\\s*=\\s*1", "desc": "OR 1=1 恒真条件"},
+    {"id": "SQLI-BOOL-002", "subtype": "boolean", "severity": 6, "pattern": "\\band\\s+1\\s*=\\s*2", "desc": "AND 1=2 恒假条件，用于盲注探测"},
+    {"id": "SQLI-BOOL-003", "subtype": "boolean", "severity": 5, "pattern": "'\\s*(?:or|and)\\s+'[^']{0,40}'\\s*=\\s*'", "desc": "引号闭合后的 OR/AND 条件"},
+    {"id": "SQLI-BOOL-004", "subtype": "boolean", "severity": 5, "pattern": "\\b(?:or|and)\\b\\s+['\"]?\\w+['\"]?\\s*=\\s*['\"]?\\w+['\"]?\\s*(?:--|#)", "desc": "带注释截断的布尔条件"},
+
+    {"id": "SQLI-TIME-001", "subtype": "time", "severity": 7, "pattern": "\\b(?:sleep|pg_sleep)\\s*\\(\\s*\\d+", "desc": "时间盲注：SLEEP/PG_SLEEP"},
+    {"id": "SQLI-TIME-002", "subtype": "time", "severity": 7, "pattern": "\\bbenchmark\\s*\\(", "desc": "时间盲注：BENCHMARK 压测函数"},
+    {"id": "SQLI-TIME-003", "subtype": "time", "severity": 7, "pattern": "\\bwaitfor\\s+delay\\b", "desc": "时间盲注：SQL Server WAITFOR DELAY"},
+    {"id": "SQLI-TIME-004", "subtype": "time", "severity": 7, "pattern": "\\bif\\s*\\([^)]{0,60}\\bsleep\\b", "desc": "时间盲注：IF(...SLEEP(...)) 组合"},
+
+    {"id": "SQLI-ERR-001", "subtype": "error", "severity": 7, "pattern": "\\bextractvalue\\s*\\(", "desc": "报错注入：EXTRACTVALUE"},
+    {"id": "SQLI-ERR-002", "subtype": "error", "severity": 7, "pattern": "\\bupdatexml\\s*\\(", "desc": "报错注入：UPDATEXML"},
+    {"id": "SQLI-ERR-003", "subtype": "error", "severity": 7, "pattern": "\\bfloor\\s*\\(\\s*rand\\s*\\(", "desc": "报错注入：FLOOR(RAND()) 主键冲突"},
+    {"id": "SQLI-ERR-004", "subtype": "error", "severity": 6, "pattern": "\\bexp\\s*\\(\\s*~", "desc": "报错注入：EXP(~(SELECT ...)) 溢出"},
+
+    {"id": "SQLI-STACK-001", "subtype": "stacked", "severity": 8, "pattern": ";\\s*(?:select|insert|update|delete|drop|create|alter|truncate)\\b", "desc": "堆叠查询：分号后接第二条 SQL"},
+    {"id": "SQLI-STACK-002", "subtype": "stacked", "severity": 8, "pattern": "\\binto\\s+(?:out|dump)file\\b", "desc": "文件写入：INTO OUTFILE / DUMPFILE"},
+    {"id": "SQLI-STACK-003", "subtype": "stacked", "severity": 7, "pattern": "\\bload_file\\s*\\(", "desc": "文件读取：LOAD_FILE"},
+    {"id": "SQLI-STACK-004", "subtype": "stacked", "severity": 8, "pattern": ";\\s*shutdown\\b", "desc": "堆叠查询：关闭数据库"},
+
+    {"id": "SQLI-GEN-001", "subtype": "generic", "severity": 5, "pattern": "\\bselect\\b[^;]{0,80}\\bfrom\\b", "desc": "通用 SELECT ... FROM 查询片段"},
+    {"id": "SQLI-GEN-002", "subtype": "generic", "severity": 7, "pattern": "\\b(?:information_schema|sysobjects|mysql\\.user)\\b", "desc": "系统库/系统表探测"},
+    {"id": "SQLI-GEN-003", "subtype": "generic", "severity": 4, "pattern": "\\b(?:concat|char)\\s*\\(\\s*\\d+", "desc": "字符拼接构造，常用于绕过关键字过滤"},
+    {"id": "SQLI-GEN-004", "subtype": "generic", "severity": 7, "pattern": "\\b(?:exec|execute)\\s*\\(|\\bexecute\\s+immediate\\b", "desc": "动态 SQL 执行"},
+    {"id": "SQLI-OBF-001", "subtype": "generic", "severity": 6, "pattern": "/\\*!\\d{0,6}", "desc": "MySQL 版本注释包裹关键字，注释内容仍被数据库执行，可绕过去注释归一化"}
+  ]
+}

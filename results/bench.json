@@ -1,0 +1,50 @@
+{
+  "environment": "Windows 11 + Python 3.12, 本地回环，单机",
+  "direct_upstream": {
+    "url": "http://127.0.0.1:8081/sqli?id=1",
+    "count": 200,
+    "status": [
+      200
+    ],
+    "p50_ms": 1.09,
+    "p95_ms": 23.39,
+    "mean_ms": 5.39,
+    "max_ms": 26.19
+  },
+  "through_waf_allow": {
+    "url": "http://127.0.0.1:8080/sqli?id=1",
+    "count": 200,
+    "status": [
+      200
+    ],
+    "p50_ms": 15.62,
+    "p95_ms": 31.78,
+    "mean_ms": 15.85,
+    "max_ms": 40.85
+  },
+  "through_waf_block": {
+    "url": "http://127.0.0.1:8080/sqli?id=1%20union%20select%201,2,3",
+    "count": 100,
+    "status": [
+      0
+    ],
+    "p50_ms": 2.29,
+    "p95_ms": 25.24,
+    "mean_ms": 7.92,
+    "max_ms": 27.74
+  },
+  "overhead_p50_ms": 14.53,
+  "overhead_ratio": 14.33,
+  "direct_throughput": {
+    "concurrency": 16,
+    "requests": 400,
+    "duration_s": 1.14,
+    "throughput_rps": 352.3
+  },
+  "waf_throughput": {
+    "concurrency": 16,
+    "requests": 400,
+    "duration_s": 1.43,
+    "throughput_rps": 278.8
+  }
+}

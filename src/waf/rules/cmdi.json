@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "category": "cmdi",
+  "comment": "命令注入规则族：覆盖分隔符、命令替换、空白绕过(${IFS})、换行绕过、引号拼接、base64 管道等手法。",
+  "rules": [
+    {"id": "CMDI-SEP-001", "subtype": "separator", "severity": 7, "pattern": "[;|]\\s*(?:whoami|id|ls|dir|cat|type|curl|wget|nc|bash|sh|cmd|powershell)\\b", "desc": "分号/管道后接系统命令"},
+    {"id": "CMDI-SEP-002", "subtype": "separator", "severity": 7, "pattern": "&&\\s*(?:whoami|id|ls|dir|cat|type|curl|wget|ping)\\b", "desc": "&& 逻辑连接执行第二条命令"},
+    {"id": "CMDI-SEP-003", "subtype": "separator", "severity": 6, "pattern": "\\|\\|\\s*(?:whoami|id|ls|dir|cat|type)\\b", "desc": "|| 逻辑或连接执行命令"},
+    {"id": "CMDI-SEP-004", "subtype": "separator", "severity": 5, "pattern": "[;|&]\\s*\\w+\\s*>\\s*/", "desc": "命令输出重定向到文件"},
+
+    {"id": "CMDI-SUB-001", "subtype": "substitution", "severity": 7, "pattern": "\\$\\([^)]{1,80}\\)", "desc": "命令替换 $(...) 执行子命令"},
+    {"id": "CMDI-SUB-002", "subtype": "substitution", "severity": 7, "pattern": "`[^`]{1,80}`", "desc": "反引号命令替换"},
+    {"id": "CMDI-SUB-003", "subtype": "substitution", "severity": 6, "pattern": "\\$\\(\\s*(?:cat|ls|id|whoami|curl|wget|nc)\\b", "desc": "命令替换内嵌读取类命令"},
+    {"id": "CMDI-SUB-004", "subtype": "substitution", "severity": 5, "pattern": "\\$\\{\\w*:?\\d*\\}", "desc": "花括号变量展开，可拼接命令"},
+
+    {"id": "CMDI-IFS-001", "subtype": "whitespace_bypass", "severity": 8, "pattern": "\\$\\{?ifs\\}?", "desc": "绕过1：用 ${IFS} 代替空格分隔命令参数"},
+    {"id": "CMDI-NL-001", "subtype": "whitespace_bypass", "severity": 6, "pattern": "[\\r\\n]\\s*(?:whoami|id|ls|dir|cat|type|curl|wget|powershell)\\b", "desc": "绕过2：用换行/回车代替分号执行新命令"},
+    {"id": "CMDI-TAB-001", "subtype": "whitespace_bypass", "severity": 5, "pattern": "\\b(?:cat|ls|id|whoami)\\s*\\$\\{?ifs", "desc": "命令与参数之间用 IFS 分隔的变体"},
+
+    {"id": "CMDI-QUOTE-001", "subtype": "quote_bypass", "severity": 8, "pattern": "(?:c['\"]a['\"]t|w['\"]h['\"]o['\"]a['\"]m['\"]i|l['\"]s)", "desc": "绕过3：引号拼接拆分关键字，如 c'a't"},
+    {"id": "CMDI-QUOTE-002", "subtype": "quote_bypass", "severity": 6, "pattern": "\\b\\w{1,3}(?:''|\"\")\\w{1,6}\\b\\s+/", "desc": "空引号插入打断关键字识别"},
+
+    {"id": "CMDI-B64-001", "subtype": "encoding_bypass", "severity": 7, "pattern": "\\bbase64\\s+(?:-d|--decode)\\b", "desc": "绕过4：base64 解码后执行"},
+    {"id": "CMDI-B64-002", "subtype": "encoding_bypass", "severity": 7, "pattern": "\\becho\\s+[A-Za-z0-9+/=]{16,}\\s*\\|\\s*base64", "desc": "echo 编码串管道给 base64 解码"},
+    {"id": "CMDI-HEX-001", "subtype": "encoding_bypass", "severity": 6, "pattern": "(?:\\\\x[0-9a-f]{2}){3}", "desc": "十六进制转义拼接命令"},
+
+    {"id": "CMDI-PIPE-001", "subtype": "pipe_exec", "severity": 7, "pattern": "\\|\\s*(?:sh|bash|python|python3|perl|php|nc|ncat|telnet)\\b", "desc": "管道把数据交给解释器执行"},
+    {"id": "CMDI-REV-001", "subtype": "reverse_shell", "severity": 9, "pattern": "\\b(?:nc|ncat|netcat)\\s+(?:-e|--exec)\\b|bash\\s+-i\\s+>\\s*&", "desc": "反弹 shell 特征"},
+    {"id": "CMDI-REDIR-001", "subtype": "file_write", "severity": 6, "pattern": ">>?\\s*/(?:etc|tmp|var|dev)/", "desc": "重定向写入系统目录"},
+    {"id": "CMDI-DL-001", "subtype": "download_exec", "severity": 6, "pattern": "\\b(?:curl|wget)\\s+(?:-\\w+\\s+)*https?://", "desc": "下载远程脚本后执行，常用作落地方案"},
+    {"id": "CMDI-PS-001", "subtype": "powershell", "severity": 7, "pattern": "\\bpowershell(?:\\s+-\\w+)*\\s+-[ce]\\b", "desc": "PowerShell 编码/命令执行"}
+  ]
+}

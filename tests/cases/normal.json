@@ -1,0 +1,18 @@
+{
+  "category": "normal",
+  "comment": "正常业务流量：用于验证误报率。全部期望放行，任何一条被拦截都算误报。",
+  "cases": [
+    {"name": "首页", "location": "url", "expect": "allow", "path": "/"},
+    {"name": "数字 ID 查询", "location": "url", "expect": "allow", "path": "/sqli?id=1"},
+    {"name": "普通搜索词", "location": "url", "expect": "allow", "path": "/xss?q=hello"},
+    {"name": "含单引号人名 O'Reilly", "location": "url", "expect": "allow", "path": "/xss?q=O%27Reilly"},
+    {"name": "ping 本机", "location": "url", "expect": "allow", "path": "/ping?host=127.0.0.1"},
+    {"name": "DVWA 登录页", "location": "url", "expect": "allow", "path": "/dvwa/login.php"},
+    {"name": "DVWA 登录提交", "location": "body", "expect": "allow", "method": "POST", "path": "/dvwa/login.php", "body": "username=admin&password=password&Login=Login", "content_type": "application/x-www-form-urlencoded"},
+    {"name": "DVWA SQL 模块正常请求", "location": "url", "expect": "allow", "path": "/dvwa/vulnerabilities/sqli/?id=1&Submit=Submit"},
+    {"name": "浏览器 User-Agent", "location": "header", "expect": "allow", "path": "/sqli?id=1", "headers": {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}},
+    {"name": "DVWA 站内 Referer", "location": "header", "expect": "allow", "path": "/sqli?id=1", "headers": {"Referer": "http://192.168.1.101/dvwa/vulnerabilities/sqli/"}},
+    {"name": "DVWA 会话 Cookie", "location": "cookie", "expect": "allow", "path": "/sqli?id=1", "cookie": "PHPSESSID=abc123def456ghi789; security=low"},
+    {"name": "中文参数", "location": "url", "expect": "allow", "path": "/xss?q=%E4%BD%A0%E5%A5%BD%E4%B8%96%E7%95%8C"}
+  ]
+}

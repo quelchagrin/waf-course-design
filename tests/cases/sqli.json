@@ -1,0 +1,26 @@
+{
+  "category": "sqli",
+  "cases": [
+    {"name": "UNION 基础注入", "location": "url", "expect": "block", "path": "/sqli?id=1%20union%20select%201,2,3"},
+    {"name": "UNION ALL 变体", "location": "url", "expect": "block", "path": "/sqli?id=1%20union%20all%20select%201,2,3"},
+    {"name": "注释拆关键字 un/**/ion", "location": "url", "expect": "block", "path": "/sqli?id=1%20un/**/ion%20sel/**/ect%201,2"},
+    {"name": "大小写混合 UnIoN", "location": "url", "expect": "block", "path": "/sqli?id=1%20UnIoN%20SeLeCt%201,2"},
+    {"name": "布尔 OR 1=1", "location": "url", "expect": "block", "path": "/sqli?id=1%27%20or%201=1--%20"},
+    {"name": "布尔 AND 1=2", "location": "url", "expect": "block", "path": "/sqli?id=1%27%20and%201=2--%20"},
+    {"name": "时间盲注 SLEEP", "location": "url", "expect": "block", "path": "/sqli?id=1%27%20and%20sleep(5)--%20"},
+    {"name": "时间盲注 BENCHMARK", "location": "url", "expect": "block", "path": "/sqli?id=1%27%20and%20benchmark(1000000,md5(1))--%20"},
+    {"name": "报错注入 EXTRACTVALUE", "location": "url", "expect": "block", "path": "/sqli?id=1%27%20and%20extractvalue(1,concat(0x7e,version()))--%20"},
+    {"name": "报错注入 UPDATEXML", "location": "url", "expect": "block", "path": "/sqli?id=1%27%20and%20updatexml(1,concat(0x7e,version()),1)--%20"},
+    {"name": "报错注入 FLOOR(RAND)", "location": "url", "expect": "block", "path": "/sqli?id=1%27%20and%20floor(rand(0)*2)--%20"},
+    {"name": "堆叠查询 DROP TABLE", "location": "url", "expect": "block", "path": "/sqli?id=1;drop%20table%20users--%20"},
+    {"name": "文件写入 INTO OUTFILE", "location": "url", "expect": "block", "path": "/sqli?id=1%20into%20outfile%20%27/tmp/x%27"},
+    {"name": "系统表探测 information_schema", "location": "url", "expect": "block", "path": "/sqli?id=1%20union%20select%201,2,group_concat(table_name)%20from%20information_schema.tables"},
+    {"name": "双重 URL 编码", "location": "url", "expect": "block", "path": "/sqli?id=1%2520union%2520select%25201,2"},
+    {"name": "body 表单参数注入", "location": "body", "expect": "block", "method": "POST", "path": "/calc", "body": "expr=1+union+select+1", "content_type": "application/x-www-form-urlencoded"},
+    {"name": "body JSON 参数注入", "location": "body", "expect": "block", "method": "POST", "path": "/calc", "body": "{\"q\":\"1 union select 1,2\"}", "content_type": "application/json"},
+    {"name": "header 注入 User-Agent", "location": "header", "expect": "block", "path": "/sqli?id=1", "headers": {"User-Agent": "1 union select 1,2"}},
+    {"name": "cookie 注入", "location": "cookie", "expect": "block", "path": "/sqli?id=1", "cookie": "id=1 union select 1,2"},
+    {"name": "正常数字参数", "location": "url", "expect": "allow", "path": "/sqli?id=1"},
+    {"name": "单个引号，不构成注入", "location": "url", "expect": "allow", "path": "/sqli?id=1%27"}
+  ]
+}

